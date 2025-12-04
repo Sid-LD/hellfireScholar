@@ -8,6 +8,7 @@
     <link rel="icon" href="icon.jpg">
 </head>
 <body>
+    <!-- Authentication Screen -->
     <div id="authScreen" class="auth-screen">
         <div class="auth-card">
             <div class="auth-header">
@@ -21,9 +22,10 @@
                 <button class="auth-tab" onclick="switchAuthMode('register')">Register</button>
             </div>
 
-            <div id="registerField" style="display: none;">
+            <div id="registerFields" style="display: none;">
                 <input type="text" id="registerName" placeholder="Full Name" class="input-group">
             </div>
+
             <input type="email" id="authEmail" placeholder="Email" class="input-group">
             <input type="password" id="authPassword" placeholder="Password" class="input-group">
             <button class="btn-primary" onclick="handleAuth()">
@@ -31,5 +33,225 @@
             </button>
         </div>
     </div>
+
+    <!-- Main App Screen -->
+    <div id="appScreen" class="app-screen">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="header-logo">
+                    <span>📚</span>
+                    <span>Hellfire Scholar</span>
+                </div>
+                <div class="header-user">
+                    <div class="user-info">
+                        <span class="user-name" id="userName"></span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="app-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav>
+                    <div class="nav-item active" onclick="switchTab('dashboard')">
+                        📊 <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('notes')">
+                        📄 <span>Notes & Resources</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('syllabus')">
+                        📚 <span>Syllabus</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('assignments')">
+                        ✅ <span>Assignments</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('attendance')">
+                        👥 <span>Attendance</span>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard -->
+                <div id="dashboard" class="content-section active">
+                    <h2 class="section-title">Dashboard</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div>
+                                    <div class="stat-label">Total Notes</div>
+                                    <div class="stat-value" style="color: #f97316;" id="totalNotes">0</div>
+                                </div>
+                                <div style="font-size: 40px;">📄</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div>
+                                    <div class="stat-label">Pending Tasks</div>
+                                    <div class="stat-value" style="color: #dc2626;" id="pendingTasks">0</div>
+                                </div>
+                                <div style="font-size: 40px;">✅</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div>
+                                    <div class="stat-label">Avg Attendance</div>
+                                    <div class="stat-value" style="color: #10b981;" id="avgAttendance">--</div>
+                                </div>
+                                <div style="font-size: 40px;">👥</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-content">
+                                <div>
+                                    <div class="stat-label">Subjects</div>
+                                    <div class="stat-value" style="color: #3b82f6;">4</div>
+                                </div>
+                                <div style="font-size: 40px;">📚</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Attendance Alerts</h3>
+                        <div id="attendanceAlerts"></div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div id="notes" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Notes & Resources</h2>
+                        <button class="btn-add" onclick="openModal('uploadNote')">
+                            <span>➕</span>
+                            <span>Upload</span>
+                        </button>
+                    </div>
+                    
+                    <div class="subject-filter">
+                        <label class="input-label">Filter by Subject:</label>
+                        <select id="notesFilter" class="filter-select" onchange="renderNotes()">
+                            <option value="all">All Subjects</option>
+                            <option value="MICROPROCESSORS AND ITS APPLICATIONS">MICROPROCESSORS AND ITS APPLICATIONS</option>
+                            <option value="ELECTROMAGNETIC THEORY">ELECTROMAGNETIC THEORY</option>
+                            <option value="SIGNALS AND SYSTEMS">SIGNALS AND SYSTEMS</option>
+                            <option value="SOLID STATE DEVICES AND CIRCUITS">SOLID STATE DEVICES AND CIRCUITS</option>
+                        </select>
+                    </div>
+                    
+                    <div id="notesGrid" class="grid"></div>
+                </div>
+
+                <!-- Syllabus -->
+                <div id="syllabus" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Syllabus Progress</h2>
+                        <div class="subject-selector">
+                            <label class="input-label">Select Subject:</label>
+                            <select id="syllabusSubjectSelect" class="filter-select" onchange="renderSyllabus()">
+                                <option value="MICROPROCESSORS AND ITS APPLICATIONS">MICROPROCESSORS AND ITS APPLICATIONS</option>
+                                <option value="ELECTROMAGNETIC THEORY">ELECTROMAGNETIC THEORY</option>
+                                <option value="SIGNALS AND SYSTEMS">SIGNALS AND SYSTEMS</option>
+                                <option value="SOLID STATE DEVICES AND CIRCUITS">SOLID STATE DEVICES AND CIRCUITS</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="syllabusContainer"></div>
+                </div>
+
+                <!-- Assignments -->
+                <div id="assignments" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Assignments & Quizzes</h2>
+                        <button class="btn-add" onclick="openModal('addAssignment')">
+                            <span>➕</span>
+                            <span>Add Assignment</span>
+                        </button>
+                    </div>
+                    <div id="assignmentsContainer"></div>
+                </div>
+
+                <!-- Attendance -->
+                <div id="attendance" class="content-section">
+                    <h2 class="section-title">Attendance Tracker</h2>
+                    <div id="attendanceContainer"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Upload Note Modal -->
+    <div id="uploadNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Upload Resource</h3>
+                <button class="btn-close" onclick="closeModal('uploadNote')">×</button>
+            </div>
+            <input type="text" id="noteTitle" placeholder="Title" class="input-group">
+            
+            <label class="input-label">Subject</label>
+            <select id="noteSubject" class="input-group">
+                <option value="MICROPROCESSORS AND ITS APPLICATIONS">MICROPROCESSORS AND ITS APPLICATIONS</option>
+                <option value="ELECTROMAGNETIC THEORY">ELECTROMAGNETIC THEORY</option>
+                <option value="SIGNALS AND SYSTEMS">SIGNALS AND SYSTEMS</option>
+                <option value="SOLID STATE DEVICES AND CIRCUITS">SOLID STATE DEVICES AND CIRCUITS</option>
+            </select>
+            
+            <label class="input-label">Category</label>
+            <select id="noteCategory" class="input-group">
+                <option value="notes">Notes</option>
+                <option value="pyq">Previous Year Questions</option>
+                <option value="resource">Study Material</option>
+            </select>
+            
+            <input type="file" id="noteFile" class="input-group">
+            <button class="btn-primary" onclick="uploadNote()">Upload</button>
+        </div>
+    </div>
+
+    <!-- Add Assignment Modal -->
+    <div id="addAssignmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Assignment</h3>
+                <button class="btn-close" onclick="closeModal('addAssignment')">×</button>
+            </div>
+            <input type="text" id="assignmentTitle" placeholder="Assignment Title" class="input-group">
+            
+            <label class="input-label">Subject</label>
+            <select id="assignmentSubject" class="input-group">
+                <option value="MICROPROCESSORS AND ITS APPLICATIONS">MICROPROCESSORS AND ITS APPLICATIONS</option>
+                <option value="ELECTROMAGNETIC THEORY">ELECTROMAGNETIC THEORY</option>
+                <option value="SIGNALS AND SYSTEMS">SIGNALS AND SYSTEMS</option>
+                <option value="SOLID STATE DEVICES AND CIRCUITS">SOLID STATE DEVICES AND CIRCUITS</option>
+            </select>
+            
+            <label class="input-label">Deadline</label>
+            <input type="date" id="assignmentDeadline" class="input-group">
+            
+            <label class="input-label">Status</label>
+            <select id="assignmentStatus" class="input-group">
+                <option value="pending">Pending</option>
+                <option value="submitted">Submitted</option>
+                <option value="graded">Graded</option>
+            </select>
+            
+            <div id="marksField" style="display: none;">
+                <label class="input-label">Marks Obtained</label>
+                <input type="number" id="assignmentMarks" placeholder="Marks" class="input-group" min="0" max="100">
+            </div>
+            <button class="btn-primary" onclick="addAssignment()">Add Assignment</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
